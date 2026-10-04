@@ -1,0 +1,12 @@
+build/
+legacy/*.json
+
+# Auto-generated OIDC signing key - created by server tests on first run
+server/oidc-key.json
+oidc-key.json
+oidc-funnel-clients.json
+result
+
+# direnv files
+.envrc
+.direnv

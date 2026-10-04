@@ -1,0 +1,47 @@
+name: Linux CI
+
+on:
+  push:
+    branches: [ "main" ]
+
+  pull_request:
+    branches: [ "main" ]
+
+  # Allows manual triggering of the workflow
+  workflow_dispatch:
+
+jobs:
+
+  run-tests:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Go
+      uses: actions/setup-go@v4
+      with:
+        go-version-file: go.mod
+
+    # Only run in this linux based runner
+    - name: Check Formatting
+      run: |
+        gofmt -l .
+
+    - name: check nix flake is up to date
+      run: |
+        ./update-flake.sh
+        echo
+        echo
+        git diff --name-only --exit-code || (echo "The files above need updating. Please run './update-flake.sh'."; exit 1)
+
+    - name: Build and test
+      run: |
+        go build ./...
+        go test -v ./...
+
+    - name: Verify --version flag
+      run: |
+        go build -o tsidp-server .
+        VERSION=$(./tsidp-server --version)
+        echo "Version: $VERSION"
+        [ -n "$VERSION" ] || { echo "ERROR: --version produced empty output"; exit 1; }
