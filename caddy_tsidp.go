@@ -1,4 +1,4 @@
-package caddy_anubis
+package caddy_tsidp
 
 import (
 	"crypto/ed25519"
@@ -8,8 +8,7 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/TecharoHQ/anubis"
-	libanubis "github.com/TecharoHQ/anubis/lib"
+	"github.com/tailscale/tsidp"
 	"github.com/caddyserver/caddy/v2"
 	"github.com/caddyserver/caddy/v2/caddyconfig/caddyfile"
 	"github.com/caddyserver/caddy/v2/caddyconfig/httpcaddyfile"
@@ -19,23 +18,23 @@ import (
 
 func init() {
 	caddy.RegisterModule(AnubisMiddleware{})
-	httpcaddyfile.RegisterHandlerDirective("anubis", parseCaddyfileHandler)
-	httpcaddyfile.RegisterDirectiveOrder("anubis", httpcaddyfile.Before, "push")
+	httpcaddyfile.RegisterHandlerDirective("tsidp", parseCaddyfileHandler)
+	httpcaddyfile.RegisterDirectiveOrder("tsidp", httpcaddyfile.Before, "push")
 }
 
 func (AnubisMiddleware) CaddyModule() caddy.ModuleInfo {
 	return caddy.ModuleInfo{
-		ID:  "http.handlers.anubis",
+		ID:  "http.handlers.tsidp",
 		New: func() caddy.Module { return new(AnubisMiddleware) },
 	}
 }
 
 type AnubisMiddleware struct {
-	Options           libanubis.Options `json:"options"`
+	Options           libtsidp.Options `json:"options"`
 	PolicyFname       string            `json:"policy_fname,omitempty"`
 	DefaultDifficulty int               `json:"default_difficulty,omitempty"`
 
-	anubis *libanubis.Server
+	tsidp *libtsidp.Server
 	log    *zap.Logger
 	next   caddyhttp.Handler
 	err    error
@@ -52,10 +51,10 @@ func (m *AnubisMiddleware) Provision(ctx caddy.Context) error {
 	m.log = ctx.Logger()
 	m.Options.Logger = ctx.Slogger()
 
-	m.log.Debug("loading anubis policies", zap.String("policy_file", m.PolicyFname), zap.Int("default_difficulty", m.DefaultDifficulty))
-	policy, err := libanubis.LoadPoliciesOrDefault(ctx, m.PolicyFname, m.DefaultDifficulty, ctx.Logger().Level().String(), false)
+	m.log.Debug("loading tsidp policies", zap.String("policy_file", m.PolicyFname), zap.Int("default_difficulty", m.DefaultDifficulty))
+	policy, err := libtsidp.LoadPoliciesOrDefault(ctx, m.PolicyFname, m.DefaultDifficulty, ctx.Logger().Level().String(), false)
 	if err != nil {
-		return fmt.Errorf("failed to load anubis policies from '%s': %w", m.PolicyFname, err)
+		return fmt.Errorf("failed to load tsidp policies from '%s': %w", m.PolicyFname, err)
 	}
 
 	m.Options.Next = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -64,7 +63,7 @@ func (m *AnubisMiddleware) Provision(ctx caddy.Context) error {
 		}
 	})
 	m.Options.Policy = policy
-	m.anubis, err = libanubis.New(m.Options)
+	m.tsidp, err = libtsidp.New(m.Options)
 	if err != nil {
 		return err
 	}
@@ -83,7 +82,7 @@ func (m *AnubisMiddleware) ServeHTTP(w http.ResponseWriter, r *http.Request, nex
 	m.next = next
 	m.err = nil
 
-	m.anubis.ServeHTTP(w, r)
+	m.tsidp.ServeHTTP(w, r)
 	if m.err != nil {
 		return m.err
 	}
@@ -94,8 +93,8 @@ func (m *AnubisMiddleware) ServeHTTP(w http.ResponseWriter, r *http.Request, nex
 func (m *AnubisMiddleware) UnmarshalCaddyfile(d *caddyfile.Dispenser) error {
 	d.Next()
 
-	m.DefaultDifficulty = anubis.DefaultDifficulty
-	m.Options.CookieExpiration = anubis.CookieDefaultExpirationTime
+	m.DefaultDifficulty = tsidp.DefaultDifficulty
+	m.Options.CookieExpiration = tsidp.CookieDefaultExpirationTime
 	m.Options.CookieSecure = true
 
 	for nesting := d.Nesting(); d.NextBlock(nesting); {
@@ -125,7 +124,7 @@ func (m *AnubisMiddleware) UnmarshalCaddyfile(d *caddyfile.Dispenser) error {
 			}
 			m.Options.ED25519PrivateKey = ed25519.NewKeyFromSeed(seed)
 		}
-	} // anubis options
+	} // tsidp options
 
 	if d.NextArg() {
 		return d.ArgErr()

@@ -1,11 +1,11 @@
-# `caddy-anubis`
+# `caddy-tsidp`
 
-You can add caddy-anubis to your server using xcaddy:
+You can add caddy-tsidp to your server using xcaddy:
 
 ```
 xcaddy build \
-  --with tangled.sh/kot.pink/caddy-anubis@main \
-  --replace github.com/TecharoHQ/anubis=github.com/kotx/anubis-static@v1.24.0
+  --with tangled.sh/kot.pink/caddy-tsidp@main \
+  --replace github.com/TecharoHQ/tsidp=github.com/kotx/tsidp-static@v1.24.0
   # ...any other plugins
 ```
 
@@ -13,20 +13,20 @@ xcaddy build \
 
 ```Caddyfile
 localhost {
-	@anubis {
+	@tsidp {
 		# This matcher allows you to select specific paths for Anubis to handle.
-		# If you want to handle all paths, remove this block and use `anubis {...}` instead!
+		# If you want to handle all paths, remove this block and use `tsidp {...}` instead!
 		path / # don't let AI scrapers browse the file index
-		path /.within.website/* # required for anubis to work
+		path /.within.website/* # required for tsidp to work
 
-		not path /api/* # exclude api routes from anubis
+		not path /api/* # exclude api routes from tsidp
 	}
 
-	log http.handlers.anubis {
+	log http.handlers.tsidp {
 		level DEBUG # optionally set log level
 	}
 
-	anubis @anubis {
+	tsidp @tsidp {
 		# This setting gets overridden a lot by the default bot policy.
 		difficulty 4
 
@@ -34,7 +34,7 @@ localhost {
 		policy_fname botPolicies.yaml
 
 		private_key {$ED25519_PRIVATE_KEY} # for challenge persistence across restarts
-										   # or if you're running multiple anubis instances
+										   # or if you're running multiple tsidp instances
 	}
 
 	file_server browse

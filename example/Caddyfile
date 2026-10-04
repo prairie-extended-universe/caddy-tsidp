@@ -1,18 +1,18 @@
 localhost {
-	@anubis {
+	@tsidp {
 		# This matcher allows you to select specific paths for Anubis to handle.
-		# If you want to handle all paths, remove this block and use `anubis {...}` instead!
+		# If you want to handle all paths, remove this block and use `tsidp {...}` instead!
 		path / # don't let AI scrapers browse the file index
-		path /.within.website/* # required for anubis to work
+		path /.within.website/* # required for tsidp to work
 
-		not path /api/* # exclude api routes from anubis
+		not path /api/* # exclude api routes from tsidp
 	}
 
-	log http.handlers.anubis {
+	log http.handlers.tsidp {
 		level DEBUG
 	}
 
-	anubis @anubis {
+	tsidp @tsidp {
 		# This setting gets overridden a lot by the default bot policy.
 		difficulty 4
 
@@ -23,8 +23,8 @@ localhost {
 
 		# FIXME: required for OpenGraph passthrough!
 		## TODO: access upstream directly somehow?
-		##   otherwise anubis may trigger itself
-		##   additionally, https://github.com/TecharoHQ/anubis/issues/329
+		##   otherwise tsidp may trigger itself
+		##   additionally, https://github.com/TecharoHQ/tsidp/issues/329
 		# target http://localhost:8080
 	}
 
