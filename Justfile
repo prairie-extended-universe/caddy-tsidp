@@ -5,3 +5,8 @@ set windows-powershell := true
   just --list
 
 
+build:
+  make caddy
+
+run: build
+  ./caddy run

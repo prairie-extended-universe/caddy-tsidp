@@ -14,7 +14,7 @@ xcaddy build \
 ```Caddyfile
 localhost {
 	@tsidp {
-		# This matcher allows you to select specific paths for Anubis to handle.
+		# This matcher allows you to select specific paths for Tsidp to handle.
 		# If you want to handle all paths, remove this block and use `tsidp {...}` instead!
 		path / # don't let AI scrapers browse the file index
 		path /.within.website/* # required for tsidp to work

@@ -1,0 +1,15 @@
+{
+	admin off
+}
+
+http://testidp.witches.pet:8080 {
+	log http.handlers.tsidp {
+		level DEBUG
+	}
+
+	tsidp {
+		state_dir ./ts-state
+		canoncial_hostname idp.witches.pet
+		enable_sts
+	}
+}
