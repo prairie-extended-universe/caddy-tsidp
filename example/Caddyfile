@@ -1,0 +1,32 @@
+localhost {
+	@anubis {
+		# This matcher allows you to select specific paths for Anubis to handle.
+		# If you want to handle all paths, remove this block and use `anubis {...}` instead!
+		path / # don't let AI scrapers browse the file index
+		path /.within.website/* # required for anubis to work
+
+		not path /api/* # exclude api routes from anubis
+	}
+
+	log http.handlers.anubis {
+		level DEBUG
+	}
+
+	anubis @anubis {
+		# This setting gets overridden a lot by the default bot policy.
+		difficulty 4
+
+		# Custom bot policy.
+		policy_fname botPolicy.yaml
+
+		private_key "a183a07283e86b669e30e153ad4f0c7a9e2bbc3218fc8fa9d6b858b29e97d22b"
+
+		# FIXME: required for OpenGraph passthrough!
+		## TODO: access upstream directly somehow?
+		##   otherwise anubis may trigger itself
+		##   additionally, https://github.com/TecharoHQ/anubis/issues/329
+		# target http://localhost:8080
+	}
+
+	file_server browse
+}
