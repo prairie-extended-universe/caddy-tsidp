@@ -138,6 +138,8 @@ func (m *TsidpMiddleware) UnmarshalCaddyfile(d *caddyfile.Dispenser) error {
 				return d.ArgErr()
 			}
 			m.EnableSTS = true
+		default:
+			return d.ArgErr()
 		}
 	} // tsidp options
 

@@ -8,8 +8,8 @@ http://testidp.witches.pet:8080 {
 	}
 
 	tsidp {
-		state_dir ./ts-state
-		canoncial_hostname idp.witches.pet
+		state_dir ./idp-state
+		canonical_hostname idp.witches.pet
 		enable_sts
 	}
 }
