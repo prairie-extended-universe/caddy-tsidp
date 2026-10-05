@@ -1,4 +1,4 @@
-module git.gay/astraluma/caddy-tsidp
+module github.com/prairie-extended-universe/caddy-tsidp
 
 go 1.26.6
 
