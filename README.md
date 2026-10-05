@@ -4,7 +4,7 @@ You can add caddy-tsidp to your server using xcaddy:
 
 ```
 xcaddy build \
-  --with tangled.sh/kot.pink/caddy-tsidp@main
+  --with github.com/prairie-extended-universe/caddy-tsidp@trunk
   # ...any other plugins
 ```
 
@@ -28,3 +28,7 @@ idp.lan.mynet {
 	}
 }
 ```
+
+## Grants and other config
+
+You still need to configure grants per the [tsidp docs](https://github.com/tailscale/tsidp/blob/v0.0.15/README.md). Most of the rest of the config is handled in the Caddyfile.
