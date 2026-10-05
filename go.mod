@@ -152,5 +152,3 @@ require (
 	gopkg.in/square/go-jose.v2 v2.6.0 // indirect
 	howett.net/plist v1.0.1 // indirect
 )
-
-replace github.com/tailscale/tsidp => ./tsidp
